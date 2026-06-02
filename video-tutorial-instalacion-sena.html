@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Tutorial Instalacion - SINDESENA Regional Caldas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+:root{--v:#39A900;--vo:#3B6D11;--vc:#D6F0B2;--vs:#EAF5D5;--na:#FF7800;--az:#1A6FA8;--ro:#C0392B;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0A0A0A;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:Barlow,sans-serif;color:#fff;overflow:hidden;}
+.player{width:min(1080px,100vw,calc((100vh - 110px)*16/9));display:flex;flex-direction:column;}
+.pl-header{background:#111;border-radius:14px 14px 0 0;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1E1E1E;}
+.pl-logo{background:var(--v);padding:4px 10px;border-radius:6px;font-weight:900;font-size:13px;letter-spacing:1px;}
+.pl-title{font-size:13px;color:rgba(255,255,255,.45);}
+.pl-badge{background:var(--na);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;}
+.pl-scene{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#060F02;}
+.scene-bg{position:absolute;inset:0;transition:background .5s;}
+.scene-counter{position:absolute;top:14px;right:18px;font-size:12px;color:rgba(255,255,255,.25);font-weight:700;letter-spacing:2px;z-index:50;font-family:Barlow Condensed,sans-serif;}
+.scene-stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;padding:22px 44px;}
+.scene-fade{position:absolute;inset:0;background:#030A01;z-index:80;opacity:0;pointer-events:none;transition:opacity .3s;}
+.scene-fade.on{opacity:1;}
+.narrator{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.92) 40%);padding:50px 26px 14px;z-index:40;}
+.narrator-inner{display:flex;align-items:flex-end;gap:12px;}
+.narrator-av{width:32px;height:32px;border-radius:50%;background:var(--v);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;border:2px solid var(--vc);}
+.narrator-bubble{background:rgba(255,255,255,.09);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:8px 15px;flex:1;}
+.narrator-text{font-size:14px;line-height:1.55;color:rgba(255,255,255,.9);font-weight:500;min-height:20px;}
+.cursor-blink{display:inline-block;width:2px;height:13px;background:var(--v);margin-left:2px;vertical-align:middle;animation:blink .75s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.pl-progress{height:5px;background:#1A1A1A;cursor:pointer;}
+.prog-bg{width:100%;height:5px;background:rgba(255,255,255,.1);position:relative;}
+.prog-fill{height:5px;background:linear-gradient(90deg,var(--v),#8AE030);transition:width .25s linear;position:relative;}
+.prog-fill::after{content:'';position:absolute;right:-5px;top:-3.5px;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 6px var(--v);}
+.prog-chapters{position:absolute;inset:0;pointer-events:none;}
+.chap-mark{position:absolute;top:-1px;width:2px;height:7px;background:rgba(255,255,255,.22);border-radius:1px;}
+.pl-controls{background:#181818;border-radius:0 0 14px 14px;padding:10px 20px 12px;display:flex;align-items:center;gap:12px;border-top:1px solid #222;}
+.ctrl-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.ctrl-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.ctrl-btn.play{background:var(--v);color:#fff;width:42px;height:42px;}
+.ctrl-btn.play:hover{background:#2D8A00;transform:scale(1.05);}
+.ctrl-time{font-size:12px;color:rgba(255,255,255,.4);min-width:76px;font-variant-numeric:tabular-nums;}
+.ctrl-title{flex:1;text-align:center;font-size:12px;color:rgba(255,255,255,.4);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ctrl-chaps{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ctrl-chaps:hover{background:rgba(255,255,255,.13);color:#fff;}
+.chaps-overlay{position:fixed;inset:0;background:rgba(0,0,0,.84);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.chaps-overlay.open{opacity:1;pointer-events:all;}
+.chaps-box{background:#1B1B1B;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px;width:500px;max-height:80vh;overflow-y:auto;}
+.chaps-box h3{font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:900;color:var(--vc);margin-bottom:18px;}
+.chap-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:background .18s;margin-bottom:4px;}
+.chap-item:hover{background:rgba(57,169,0,.14);}
+.chap-item.active{background:rgba(57,169,0,.22);}
+.chap-n{background:var(--vo);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.chap-item.active .chap-n{background:var(--v);}
+.chap-label{font-size:13px;font-weight:600;color:rgba(255,255,255,.8);}
+.chap-time{font-size:12px;color:rgba(255,255,255,.3);margin-left:auto;}
+.chaps-close{display:block;margin:16px auto 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;padding:9px 30px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;}
+/* scene helpers */
+.sc-t{font-family:Barlow Condensed,sans-serif;font-size:clamp(16px,2.2vw,26px);font-weight:900;color:var(--vc);margin-bottom:10px;flex-shrink:0;}
+.win{border-radius:10px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);width:100%;}
+.win-bar{display:flex;align-items:center;gap:7px;padding:0 12px;height:30px;flex-shrink:0;}
+.wd{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.wl{font-size:11px;color:rgba(255,255,255,.45);margin-left:4px;}
+.burl{flex:1;background:#13132A;border-radius:20px;padding:3px 13px;font-size:11px;font-family:JetBrains Mono,monospace;color:var(--v);white-space:nowrap;overflow:hidden;}
+.term-body{padding:13px 15px;font-family:JetBrains Mono,monospace;font-size:12px;background:#0C0C0C;}
+.tl{display:flex;gap:7px;margin-bottom:3px;opacity:0;transition:opacity .25s;}
+.tl.show{opacity:1;}
+.tp{color:#555;}.tk{color:#A8E063;font-weight:700;}.to{color:#6A9A3A;}.ti{color:#4A7A28;}
+.pma-lay{display:flex;}
+.pma-sb{background:#2B4A6F;width:175px;flex-shrink:0;padding:10px 8px;}
+.pma-sl{font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:0 6px;margin-bottom:7px;}
+.pma-db{padding:6px 9px;border-radius:5px;font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px;}
+.pma-db.on{background:rgba(57,169,0,.25);color:#A8E063;font-weight:700;}
+.pma-con{flex:1;padding:14px 16px;background:#F4F6F9;}
+.pma-tabs{display:flex;gap:3px;margin-bottom:12px;}
+.pma-tab{padding:4px 12px;border-radius:5px;font-size:11px;background:#E8EDF2;color:#555;cursor:pointer;}
+.pma-tab.on{background:var(--vs);color:var(--vo);font-weight:700;border:1px solid var(--v);}
+.si{background:var(--vs);border:1.5px solid var(--vc);border-radius:7px;padding:6px 11px;font-family:JetBrains Mono,monospace;font-size:12px;color:var(--v);width:100%;}
+.ph{background:#E0E0E0;border-radius:20px;height:9px;overflow:hidden;}
+.phi{height:9px;border-radius:20px;background:linear-gradient(90deg,var(--v),#8AE030);width:0%;transition:width 2.4s ease;}
+.ao{background:rgba(255,120,0,.13);border:1px solid rgba(255,120,0,.35);color:rgba(255,210,120,.9);border-radius:8px;padding:9px 15px;font-size:12px;width:100%;}
+.ag{background:rgba(57,169,0,.11);border:1px solid rgba(57,169,0,.3);color:rgba(180,255,120,.9);border-radius:8px;padding:9px 15px;font-size:12px;width:100%;}
+/* portal mockup */
+.portal-bg{background:linear-gradient(135deg,#1B4D2E,#0D2B18);padding:28px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.portal-cards-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:560px;}
+.pcard{border:2px solid;border-radius:12px;padding:18px;backdrop-filter:blur(4px);}
+.pcard h4{font-size:14px;font-weight:800;margin-bottom:5px;}
+.pcard p{font-size:11px;opacity:.65;line-height:1.5;margin-bottom:12px;}
+.pcard-btn{padding:8px;border-radius:7px;font-size:11px;font-weight:700;border:none;cursor:pointer;width:100%;}
+/* animations */
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes slideup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideleft{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideright{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popin{from{opacity:0;transform:scale(.78)}to{opacity:1;transform:scale(1)}}
+@keyframes growbar{from{width:0%}to{width:100%}}
+@keyframes typerev{from{max-width:0;overflow:hidden}to{max-width:500px;overflow:hidden}}
+@keyframes ringpulse{0%{transform:translate(-50%,-50%) scale(.4);opacity:.7}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
+@keyframes checkslide{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes glowanim{0%,100%{box-shadow:0 0 40px 4px rgba(57,169,0,.3)}50%{box-shadow:0 0 80px 20px rgba(57,169,0,.55)}}
+@keyframes rowslide{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.afi{opacity:0;animation:fadein .5s forwards;}
+.asu{opacity:0;animation:slideup .5s forwards;}
+.asl{opacity:0;animation:slideleft .45s forwards;}
+.asr{opacity:0;animation:slideright .45s forwards;}
+.api{opacity:0;animation:popin .45s cubic-bezier(.34,1.56,.64,1) forwards;}
+.ach{opacity:0;animation:checkslide .4s forwards;}
+.ring{position:absolute;border-radius:50%;border:2px solid rgba(57,169,0,.22);width:280px;height:280px;top:50%;left:50%;pointer-events:none;animation:ringpulse 3.2s ease-out infinite;}
+</style>
+</head>
+<body>
+
+<div class="chaps-overlay" id="chapsOverlay">
+  <div class="chaps-box">
+    <h3>Capitulos del Tutorial</h3>
+    <div id="chapsList"></div>
+    <button class="chaps-close" onclick="closeChaps()">Cerrar</button>
+  </div>
+</div>
+
+<div class="player">
+  <div class="pl-header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="pl-logo">SENA</div>
+      <span style="color:rgba(255,255,255,.35);font-size:12px">Regional Caldas</span>
+    </div>
+    <div class="pl-title">SINDESENA - Sistema de Radicados</div>
+    <div class="pl-badge">INSTALACION v2</div>
+  </div>
+  <div class="pl-scene" id="sceneWrap">
+    <div class="scene-bg" id="sceneBg"></div>
+    <div class="scene-counter" id="sceneCtr">01 / 13</div>
+    <div class="scene-stage" id="sceneStage"></div>
+    <div class="narrator">
+      <div class="narrator-inner">
+        <div class="narrator-av">&#9654;</div>
+        <div class="narrator-bubble">
+          <div class="narrator-text" id="narrText"><span class="cursor-blink"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-fade" id="sceneFade"></div>
+  </div>
+  <div class="pl-progress" id="progBar" onclick="clickProg(event)">
+    <div class="prog-bg">
+      <div class="prog-fill" id="progFill" style="width:0%"></div>
+      <div class="prog-chapters" id="progChaps"></div>
+    </div>
+  </div>
+  <div class="pl-controls">
+    <button class="ctrl-btn" onclick="prev()"><svg width="15" height="15" viewBox="0 0 15 15"><rect x="1" y="2" width="3" height="11" rx="1.5" fill="currentColor"/><path d="M13 2L6 7.5 13 13Z" fill="currentColor"/></svg></button>
+    <button class="ctrl-btn play" id="btnPlay" onclick="togglePlay()">
+      <svg id="iPlay" width="17" height="17" viewBox="0 0 17 17"><path d="M4 2.5L14 8.5 4 14.5Z" fill="#fff"/></svg>
+      <svg id="iPause" width="17" height="17" viewBox="0 0 17 17" style="display:none"><rect x="3" y="2" width="4" height="13" rx="2" fill="#fff"/><rect x="10" y="2" width="4" height="13" rx="2" fill="#fff"/></svg>
+    </button>
+    <button class="ctrl-btn" onclick="next()"><svg width="15" height="15" viewBox="0 0 15 15"><rect x="11" y="2" width="3" height="11" rx="1.5" fill="currentColor"/><path d="M2 2L9 7.5 2 13Z" fill="currentColor"/></svg></button>
+    <div class="ctrl-time" id="ctrlTime">0:00 / 0:00</div>
+    <div class="ctrl-title" id="ctrlTitle">Introduccion</div>
+    <button class="ctrl-chaps" onclick="openChaps()">&#9776; Capitulos</button>
+  </div>
+</div>
+
+<script>
+const S=[
+
+/* 1 - INTRO */
+{t:'Introduccion',d:6,bg:'linear-gradient(140deg,#060F02,#0D2208 55%,#183A08)',
+n:'Bienvenido al tutorial de instalacion del sistema SINDESENA de Radicados del SENA Regional Caldas. Version 2.0 con Portal Publico. Siga cada paso en orden.',
+r(el){
+ el.innerHTML=`
+  <div class="ring" style="animation-delay:0s"></div>
+  <div class="ring" style="animation-delay:1.1s"></div>
+  <div class="ring" style="animation-delay:2.2s"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:16px;z-index:2;text-align:center">
+   <div class="afi" style="animation-delay:.1s;background:rgba(255,255,255,.08);border:1.5px solid rgba(57,169,0,.4);border-radius:11px;padding:10px 26px;display:inline-flex;align-items:center;gap:11px">
+    <div style="background:#39A900;padding:4px 9px;border-radius:6px;font-weight:900;font-size:15px;letter-spacing:1px">SENA</div>
+    <span style="color:rgba(255,255,255,.5);font-size:12px">Regional Caldas</span>
+   </div>
+   <div class="asu" style="animation-delay:.4s">
+    <div style="font-family:Barlow Condensed,sans-serif;font-size:clamp(22px,4vw,50px);font-weight:900;line-height:1.05">Tutorial de Instalacion</div>
+    <div style="font-family:Barlow Condensed,sans-serif;font-size:clamp(13px,2.5vw,30px);font-weight:700;color:#A8E063;margin-top:4px">SINDESENA - Sistema de Radicados v2.0</div>
+   </div>
+   <div class="asu" style="animation-delay:.75s;font-size:13px;color:rgba(255,255,255,.4)">13 pasos guiados - Con Portal Publico nuevo</div>
+   <div class="asu" style="animation-delay:1s;display:flex;gap:9px;flex-wrap:wrap;justify-content:center">
+    ${['XAMPP 8.x','Node.js 18+','MySQL','React 18','PHP 8','Portal Publico'].map(t=>`<span style="background:rgba(57,169,0,.18);border:1px solid rgba(57,169,0,.35);color:#A8E063;padding:3px 13px;border-radius:20px;font-size:11px;font-weight:600">${t}</span>`).join('')}
+   </div>
+  </div>`;
+}},
+
+/* 2 - REQUISITOS */
+{t:'Requisitos previos',d:7,bg:'linear-gradient(140deg,#060F02,#0F2208)',
+n:'Antes de comenzar necesita: Windows 10 u 11, conexion a internet, el archivo ZIP del sistema, Node.js version 18 o superior y permisos de administrador.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Lo que necesita antes de empezar</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%;max-width:700px">
+   ${[
+    ['Windows 10 u 11','Al menos 4 GB de RAM','.15s','<rect x="4" y="10" width="24" height="16" rx="2" fill="#39A900"/><rect x="6" y="12" width="20" height="10" rx="1" fill="#1E5B04"/><rect x="12" y="26" width="8" height="3" rx="1" fill="#39A900"/>'],
+    ['Conexion a Internet','Para descargar XAMPP y Node.js','.4s','<circle cx="16" cy="16" r="11" fill="none" stroke="#39A900" stroke-width="2"/><line x1="5" y1="16" x2="27" y2="16" stroke="#39A900" stroke-width="1.5"/><path d="M16 5 C12 10 12 22 16 27" stroke="#39A900" stroke-width="1.5" fill="none"/><path d="M16 5 C20 10 20 22 16 27" stroke="#39A900" stroke-width="1.5" fill="none"/>'],
+    ['Archivo sena-sistema.zip','Entregado por el area de sistemas','.65s','<rect x="8" y="6" width="16" height="20" rx="2" fill="#39A900"/><line x1="11" y1="11" x2="21" y2="11" stroke="white" stroke-width="1.5"/><line x1="11" y1="15" x2="21" y2="15" stroke="white" stroke-width="1.5"/><line x1="11" y1="19" x2="17" y2="19" stroke="white" stroke-width="1.5"/>'],
+    ['Node.js v18 o superior','Descargar de nodejs.org','.9s','<rect x="6" y="16" width="20" height="12" rx="2" fill="#39A900"/><rect x="9" y="19" width="6" height="4" rx="1" fill="white"/><rect x="17" y="19" width="6" height="4" rx="1" fill="white"/><rect x="9" y="6" width="14" height="8" rx="2" fill="#D6F0B2" stroke="#39A900" stroke-width="1.5"/>'],
+   ].map(([t,d,dl,ic])=>`
+   <div class="asu" style="animation-delay:${dl};background:rgba(255,255,255,.06);border:1px solid rgba(57,169,0,.28);border-radius:11px;padding:15px 17px;display:flex;align-items:center;gap:13px">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="flex-shrink:0"><rect width="32" height="32" rx="8" fill="rgba(57,169,0,.25)"/>${ic}</svg>
+    <div><div style="font-size:14px;font-weight:700">${t}</div><div style="font-size:11px;color:rgba(255,255,255,.42);margin-top:2px">${d}</div></div>
+   </div>`).join('')}
+  </div>
+  <div class="ao asu" style="animation-delay:1.1s;max-width:700px">Instale Node.js v18+ desde <strong>nodejs.org</strong> antes de continuar. Sin el, el frontend no arranca.</div>`;
+}},
+
+/* 3 - DESCARGAR XAMPP */
+{t:'Descargar XAMPP',d:8,bg:'linear-gradient(140deg,#060814,#0A1A04)',
+n:'Abra su navegador y vaya a apachefriends.org. Haga clic en el boton naranja grande que dice Descargar XAMPP para Windows.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 1 - Descargar XAMPP</div>
+  <div class="win asu" style="animation-delay:.25s;max-width:760px">
+   <div class="win-bar" style="background:#252535">
+    <div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div>
+    <div class="burl"><span id="urlT" style="white-space:nowrap;display:inline-block;overflow:hidden;max-width:0">https://www.apachefriends.org/download.html</span></div>
+   </div>
+   <div style="background:#F0EDE8">
+    <div style="background:#F6691B;padding:13px 18px;display:flex;align-items:center;gap:14px">
+     <span style="font-family:Barlow Condensed,sans-serif;font-size:26px;font-weight:900;color:#fff">X XAMPP</span>
+     <span style="font-size:11px;color:rgba(255,255,255,.65)">The easiest way to run a local web server</span>
+    </div>
+    <div style="padding:14px 18px">
+     <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:4px">Descargas de XAMPP</div>
+     <div style="font-size:11px;color:#888;margin-bottom:12px">Elija la version para Windows:</div>
+     <div id="dlbtn" style="opacity:0;display:inline-block;background:#F6691B;color:#fff;padding:11px 24px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer">&#8659; Descargar XAMPP 8.2 - Windows 64-bit</div>
+     <div style="margin-top:6px;font-size:11px;color:#aaa">Archivo ~150 MB</div>
+    </div>
+   </div>
+  </div>
+  <div class="ag asu" style="animation-delay:1.5s;max-width:760px">Descargue siempre la version de <strong>64 bits</strong> para Windows 10 u 11</div>`;
+ setTimeout(()=>{const u=document.getElementById('urlT');if(u){u.style.animation='typerev .9s steps(44) forwards';}},700);
+ setTimeout(()=>{const b=document.getElementById('dlbtn');if(b){b.style.cssText='opacity:1;display:inline-block;background:#F6691B;color:#fff;padding:11px 24px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;animation:popin .4s cubic-bezier(.34,1.56,.64,1) forwards';}},1900);
+}},
+
+/* 4 - INSTALAR XAMPP */
+{t:'Instalar XAMPP',d:7,bg:'linear-gradient(140deg,#0D0D0D,#1A0A04)',
+n:'Ejecute el instalador descargado. Haga clic en Siguiente en cada pantalla. Deje la carpeta de instalacion como viene: C dos puntos barra xampp.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 2 - Instalar XAMPP</div>
+  <div class="win asu" style="animation-delay:.25s;max-width:660px">
+   <div class="win-bar" style="background:#C8C8C8"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl" style="color:#555">XAMPP 8.2 Setup</div></div>
+   <div style="background:#F5F5F5;padding:18px 22px;display:flex;gap:18px;align-items:flex-start">
+    <div style="background:#F6691B;border-radius:9px;padding:14px;flex-shrink:0;text-align:center;width:80px">
+     <div style="font-family:Barlow Condensed,sans-serif;font-size:30px;font-weight:900;color:#fff">X</div>
+     <div style="font-size:9px;color:rgba(255,255,255,.7);margin-top:1px">XAMPP 8.2</div>
+    </div>
+    <div style="flex:1">
+     <div style="font-size:14px;font-weight:700;color:#222;margin-bottom:5px">Welcome to XAMPP Setup Wizard</div>
+     <div style="font-size:11px;color:#666;margin-bottom:9px">This wizard will install XAMPP 8.2.0 on your computer.</div>
+     <div style="font-size:11px;color:#888;margin-bottom:4px">Installation folder:</div>
+     <div style="background:#EAF5D5;border:1.5px solid #D0E8B0;border-radius:6px;padding:6px 11px;font-family:JetBrains Mono,monospace;font-size:12px;color:#3B6D11;font-weight:700;margin-bottom:12px">C:/xampp</div>
+     <div style="font-size:11px;color:#888;margin-bottom:5px">Instalando componentes...</div>
+     <div class="ph" style="margin-bottom:12px"><div class="phi" id="instBar"></div></div>
+     <div style="display:flex;justify-content:flex-end;gap:9px">
+      <div style="background:#E8E8E8;color:#666;padding:6px 16px;border-radius:6px;font-size:12px">Back</div>
+      <div style="background:#39A900;color:#fff;padding:6px 20px;border-radius:6px;font-size:12px;font-weight:700;animation:glowanim 1.2s ease infinite">Next</div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="ao asu" style="animation-delay:1.4s;max-width:660px">No cambie la carpeta. Dejela exactamente: <strong>C:/xampp</strong></div>`;
+ setTimeout(()=>{const b=document.getElementById('instBar');if(b){b.style.cssText='height:9px;border-radius:20px;background:linear-gradient(90deg,#39A900,#8AE030);width:0%;animation:growbar 3.2s .2s ease forwards';}},900);
+}},
+
+/* 5 - PANEL XAMPP */
+{t:'Iniciar Apache y MySQL',d:8,bg:'linear-gradient(140deg,#0A1A04,#0D2B06)',
+n:'Abra el Panel de Control de XAMPP. Haga clic en Start junto a Apache y luego junto a MySQL. Cuando ambos digan Running en verde, todo esta listo.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 3 - Iniciar Apache y MySQL</div>
+  <div class="win asu" style="animation-delay:.3s;max-width:700px">
+   <div class="win-bar" style="background:#2D6A4F"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl" style="color:rgba(255,255,255,.55)">XAMPP Control Panel v3.3.0</div></div>
+   <div style="background:#F5F5F5;padding:11px">
+    <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E8E8E8;border-radius:8px;padding:9px 13px;margin-bottom:7px">
+     <div style="font-size:13px;font-weight:700;color:#222;width:74px;flex-shrink:0">Apache</div>
+     <div id="apSt" style="opacity:0;background:#D6F0B2;color:#3B6D11;font-size:11px;font-weight:700;padding:2px 11px;border-radius:20px">Running</div>
+     <div style="color:#aaa;font-size:11px;margin-left:auto">80, 443</div>
+     <div style="background:#39A900;color:#fff;padding:4px 15px;border-radius:6px;font-size:11px;font-weight:700">Start</div>
+     <div style="background:#E8E8E8;color:#666;padding:4px 11px;border-radius:6px;font-size:11px">Admin</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E8E8E8;border-radius:8px;padding:9px 13px;margin-bottom:11px">
+     <div style="font-size:13px;font-weight:700;color:#222;width:74px;flex-shrink:0">MySQL</div>
+     <div id="mySt" style="opacity:0;background:#D6F0B2;color:#3B6D11;font-size:11px;font-weight:700;padding:2px 11px;border-radius:20px">Running</div>
+     <div style="color:#aaa;font-size:11px;margin-left:auto">3306</div>
+     <div style="background:#39A900;color:#fff;padding:4px 15px;border-radius:6px;font-size:11px;font-weight:700">Start</div>
+     <div style="background:#E8E8E8;color:#666;padding:4px 11px;border-radius:6px;font-size:11px">Admin</div>
+    </div>
+    <div style="background:#1A2B10;border-radius:6px;padding:9px 13px">
+     <div id="lg1" style="opacity:0;font-family:JetBrains Mono,monospace;font-size:11px;color:#8BC34A;margin-bottom:3px">[16:04:52] Apache started [Port 80]</div>
+     <div id="lg2" style="opacity:0;font-family:JetBrains Mono,monospace;font-size:11px;color:#8BC34A;margin-bottom:3px">[16:04:54] MySQL started [Port 3306]</div>
+     <div id="lg3" style="opacity:0;font-family:JetBrains Mono,monospace;font-size:11px;color:#A5D6A7">[16:04:54] All services running.</div>
+    </div>
+   </div>
+  </div>`;
+ setTimeout(()=>{const e=document.getElementById('apSt');if(e)e.style.cssText='opacity:1;background:#D6F0B2;color:#3B6D11;font-size:11px;font-weight:700;padding:2px 11px;border-radius:20px;animation:popin .4s cubic-bezier(.34,1.56,.64,1) forwards';},1600);
+ setTimeout(()=>{const e=document.getElementById('mySt');if(e)e.style.cssText='opacity:1;background:#D6F0B2;color:#3B6D11;font-size:11px;font-weight:700;padding:2px 11px;border-radius:20px;animation:popin .4s cubic-bezier(.34,1.56,.64,1) forwards';},2600);
+ [['lg1',1800],['lg2',2000],['lg3',2900]].forEach(([id,ms])=>{setTimeout(()=>{const e=document.getElementById(id);if(e)e.style.opacity='1';},ms);});
+}},
+
+/* 6 - COPIAR ARCHIVOS */
+{t:'Copiar archivos del sistema',d:8,bg:'linear-gradient(140deg,#040E1A,#0A1A04)',
+n:'Descomprima el archivo ZIP. Copie la carpeta backend dentro de C barra xampp barra htdocs y renombrela sena-backend.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='11px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 4 - Copiar archivos</div>
+  <div style="display:flex;align-items:center;gap:14px;width:100%;max-width:740px">
+   <div class="win asl" style="animation-delay:.3s;flex:1">
+    <div class="win-bar" style="background:#555"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl">sena-sistema (extraido)</div></div>
+    <div style="background:#F5F5F5;padding:11px">
+     <div style="font-size:10px;color:#999;margin-bottom:7px">Contenido del ZIP:</div>
+     ${[['backend','API PHP','#BA7517','#FFF8E1','#FFE0B2'],['frontend','React App','#3B6D11','#F9FBF7','#E8F0E0'],['database','SQL files','#3B6D11','#F9FBF7','#E8F0E0']].map(([n,d,c,bg,bd])=>`<div style="display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:6px;background:${bg};border:1px solid ${bd};margin-bottom:5px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="2" fill="${c}"/><path d="M1 6 L1 4 L5 4 L6.5 2.5 L10 2.5 L10 4 L15 4" fill="${c}" stroke="${c}" stroke-width=".5"/></svg><span style="font-size:12px;font-weight:700;color:${c}">${n}</span><span style="font-size:10px;color:#aaa">${d}</span></div>`).join('')}
+    </div>
+   </div>
+   <div id="arr" style="opacity:0;display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0">
+    <div style="background:#39A900;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;white-space:nowrap">Copiar y renombrar</div>
+    <svg width="38" height="18" viewBox="0 0 38 18"><path d="M2 9 L30 9" stroke="#39A900" stroke-width="3" stroke-linecap="round"/><path d="M26 3.5 L36 9 26 14.5Z" fill="#39A900"/></svg>
+   </div>
+   <div class="win asr" id="dstW" style="animation-delay:.3s;flex:1;opacity:0">
+    <div class="win-bar" style="background:#2D6A4F"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl" style="color:rgba(255,255,255,.6)">C:/xampp/htdocs/</div></div>
+    <div style="background:#F5F5F5;padding:11px">
+     <div style="font-size:10px;color:#999;margin-bottom:7px">Dentro de htdocs:</div>
+     ${[['sena-backend','NUEVA','#3B6D11','#EAF5D5','#39A900',true],['dashboard','existente','#BA7517','#FFF8E1','#FFE0B2',false],['phpmyadmin','existente','#BA7517','#FFF8E1','#FFE0B2',false]].map(([n,d,c,bg,bd,bold])=>`<div style="display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:6px;background:${bg};border:${bold?'2px':'1px'} solid ${bd};margin-bottom:5px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="2" fill="${c}"/><path d="M1 6 L1 4 L5 4 L6.5 2.5 L10 2.5 L10 4 L15 4" fill="${c}"/></svg><span style="font-size:12px;font-weight:700;color:${c}">${n}</span><span style="font-size:10px;color:#aaa">${d}</span></div>`).join('')}
+    </div>
+   </div>
+  </div>
+  <div class="ao asu" style="animation-delay:1.8s;max-width:740px">El nombre exacto es <strong>sena-backend</strong> - todo minusculas con guion</div>`;
+ setTimeout(()=>{const a=document.getElementById('arr');if(a)a.style.cssText='opacity:1;display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;animation:fadein .4s forwards';},1400);
+ setTimeout(()=>{const d=document.getElementById('dstW');if(d)d.style.cssText='flex:1;opacity:1;animation:slideright .4s forwards';},1400);
+}},
+
+/* 7 - CREAR BD */
+{t:'Crear la base de datos',d:8,bg:'linear-gradient(140deg,#04101A,#08180E)',
+n:'Abra localhost barra phpmyadmin. Haga clic en Nueva, escriba el nombre sena guion competencias guion db y haga clic en Crear.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 5 - Crear la base de datos</div>
+  <div class="win asu" style="animation-delay:.3s;max-width:760px">
+   <div class="win-bar" style="background:#3D6B8C"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl">phpMyAdmin - localhost</div></div>
+   <div class="pma-lay" style="min-height:170px">
+    <div class="pma-sb">
+     <div class="pma-sl">Bases de datos</div>
+     <div id="btnN" style="opacity:0;background:rgba(57,169,0,.7);color:#fff;padding:6px 9px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:7px;cursor:pointer">+ Nueva</div>
+     <div class="pma-db">information_schema</div>
+     <div class="pma-db">mysql</div>
+     <div class="pma-db on" id="newSide" style="display:none">sena_competencias_db</div>
+    </div>
+    <div class="pma-con">
+     <div style="font-size:13px;font-weight:700;color:#333;margin-bottom:11px">Crear base de datos</div>
+     <div style="font-size:11px;color:#666;margin-bottom:5px">Nombre:</div>
+     <div class="si" style="max-width:290px;margin-bottom:11px"><span id="dbN" style="display:inline-block;overflow:hidden;white-space:nowrap;max-width:0">sena_competencias_db</span></div>
+     <div style="font-size:11px;color:#666;margin-bottom:9px">Cotejamiento: utf8mb4_spanish_ci</div>
+     <div style="display:flex;align-items:center;gap:10px">
+      <div id="btnC" style="opacity:0;background:#3D6B8C;color:#fff;padding:7px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">Crear</div>
+      <div id="dbOk" style="opacity:0;background:#D6F0B2;border:1px solid #39A900;border-radius:7px;padding:6px 14px;font-size:12px;color:#3B6D11;font-weight:700">&#10004; Base de datos creada</div>
+     </div>
+    </div>
+   </div>
+  </div>`;
+ setTimeout(()=>{const b=document.getElementById('btnN');if(b)b.style.cssText='opacity:1;background:rgba(57,169,0,.7);color:#fff;padding:6px 9px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:7px;cursor:pointer;animation:popin .4s cubic-bezier(.34,1.56,.64,1) forwards';},900);
+ setTimeout(()=>{const n=document.getElementById('dbN');if(n)n.style.cssText='display:inline-block;overflow:hidden;white-space:nowrap;animation:typerev .9s steps(22) forwards;max-width:0';},1800);
+ setTimeout(()=>{const b=document.getElementById('btnC');if(b)b.style.cssText='opacity:1;background:#3D6B8C;color:#fff;padding:7px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;animation:popin .4s forwards';},3100);
+ setTimeout(()=>{const m=document.getElementById('dbOk');if(m)m.style.cssText='opacity:1;background:#D6F0B2;border:1px solid #39A900;border-radius:7px;padding:6px 14px;font-size:12px;color:#3B6D11;font-weight:700;animation:popin .5s cubic-bezier(.34,1.56,.64,1) forwards';const s=document.getElementById('newSide');if(s)s.style.display='block';},4200);
+}},
+
+/* 8 - IMPORTAR SQL */
+{t:'Importar el SQL principal',d:8,bg:'linear-gradient(140deg,#04101A,#08180E)',
+n:'Con la base de datos seleccionada, vaya a la pestana Importar. Elija el archivo sena competencias db.sql de la carpeta database y haga clic en Continuar.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 6 - Importar el SQL principal</div>
+  <div class="win asu" style="animation-delay:.3s;max-width:760px">
+   <div class="win-bar" style="background:#3D6B8C"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl">phpMyAdmin - sena_competencias_db</div></div>
+   <div class="pma-lay" style="min-height:190px">
+    <div class="pma-sb">
+     <div class="pma-sl">Bases de datos</div>
+     <div class="pma-db on">sena_competencias_db</div>
+     ${['adjunto','radicado','seguimiento','usuario'].map(t=>`<div class="pma-db" style="font-size:10px;padding-left:16px;color:rgba(255,255,255,.25)">${t}</div>`).join('')}
+    </div>
+    <div class="pma-con">
+     <div class="pma-tabs"><div class="pma-tab">Estructura</div><div class="pma-tab">SQL</div><div class="pma-tab on">Importar</div><div class="pma-tab">Exportar</div></div>
+     <div style="font-size:11px;color:#666;margin-bottom:6px">Archivo a importar:</div>
+     <div id="fBox" style="opacity:0;background:#EAF5D5;border:1.5px solid #D0E8B0;border-radius:7px;padding:7px 12px;font-family:JetBrains Mono,monospace;font-size:11px;color:#3B6D11;font-weight:700;display:inline-block;margin-bottom:11px">sena_competencias_db.sql</div>
+     <div style="font-size:11px;color:#666;margin-bottom:5px">Progreso:</div>
+     <div class="ph" style="margin-bottom:11px"><div class="phi" id="sqlP"></div></div>
+     <div id="sqlOk" style="opacity:0;background:#D6F0B2;border:1px solid #39A900;border-radius:7px;padding:7px 14px;font-size:12px;color:#3B6D11;font-weight:700;display:inline-block">&#10004; 10 tablas importadas correctamente</div>
+    </div>
+   </div>
+  </div>`;
+ setTimeout(()=>{const f=document.getElementById('fBox');if(f)f.style.cssText='opacity:1;background:#EAF5D5;border:1.5px solid #D0E8B0;border-radius:7px;padding:7px 12px;font-family:JetBrains Mono,monospace;font-size:11px;color:#3B6D11;font-weight:700;display:inline-block;margin-bottom:11px;animation:slideup .4s forwards';},1200);
+ setTimeout(()=>{const b=document.getElementById('sqlP');if(b)b.style.cssText='height:9px;border-radius:20px;background:linear-gradient(90deg,#39A900,#8AE030);width:0%;animation:growbar 2.4s .1s ease forwards';},2300);
+ setTimeout(()=>{const m=document.getElementById('sqlOk');if(m)m.style.cssText='opacity:1;background:#D6F0B2;border:1px solid #39A900;border-radius:7px;padding:7px 14px;font-size:12px;color:#3B6D11;font-weight:700;display:inline-block;animation:popin .5s cubic-bezier(.34,1.56,.64,1) forwards';},5100);
+}},
+
+/* 9 - MIGRACION PORTAL NUEVO */
+{t:'Migrar Portal Publico (NUEVO)',d:9,bg:'linear-gradient(140deg,#1A0800,#04101A)',
+n:'NUEVO en v2.0. Ejecute el archivo migrate public portal sql en la pestana SQL de phpMyAdmin. Esto permite que ciudadanos radiquen sin login.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='11px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 7 - Migrar Portal Publico <span style="background:#FF7800;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;margin-left:8px;font-weight:700;font-family:Barlow,sans-serif">NUEVO v2.0</span></div>
+  <div class="win asu" style="animation-delay:.3s;max-width:760px">
+   <div class="win-bar" style="background:#3D6B8C"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl">phpMyAdmin - sena_competencias_db - SQL</div></div>
+   <div class="pma-lay" style="min-height:210px">
+    <div class="pma-sb">
+     <div class="pma-sl">Bases de datos</div>
+     <div class="pma-db on">sena_competencias_db</div>
+    </div>
+    <div class="pma-con">
+     <div class="pma-tabs"><div class="pma-tab">Estructura</div><div class="pma-tab on">SQL</div><div class="pma-tab">Importar</div></div>
+     <div style="font-size:11px;color:#666;margin-bottom:6px">Pegue el contenido de <strong>database/migrate_public_portal.sql</strong>:</div>
+     <div id="sqlBox" style="opacity:0;background:#1A2B10;border-radius:7px;padding:11px 13px;font-family:JetBrains Mono,monospace;font-size:10px;line-height:1.7;margin-bottom:11px">
+      <div style="color:#5A7A30">-- 1. radicado.id_instructor nullable</div>
+      <div id="sl1" style="opacity:0;color:#A8E063">ALTER TABLE radicado DROP FOREIGN KEY fk_rad_instructor;</div>
+      <div id="sl2" style="opacity:0;color:#A8E063">ALTER TABLE radicado MODIFY COLUMN id_instructor INT NULL;</div>
+      <div id="sl3" style="opacity:0;color:#5A7A30">-- 2. seguimiento.id_usuario nullable</div>
+      <div id="sl4" style="opacity:0;color:#A8E063">ALTER TABLE seguimiento MODIFY COLUMN id_usuario INT NULL;</div>
+      <div id="sl5" style="opacity:0;color:#5A7A30">-- 3. adjunto.id_usuario nullable</div>
+      <div id="sl6" style="opacity:0;color:#A8E063">ALTER TABLE adjunto MODIFY COLUMN id_usuario INT NULL;</div>
+     </div>
+     <div style="display:flex;align-items:center;gap:10px">
+      <div style="background:#39A900;color:#fff;padding:7px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">Continuar</div>
+      <div id="sqlMOk" style="opacity:0;background:#D6F0B2;border:1px solid #39A900;border-radius:7px;padding:6px 14px;font-size:12px;color:#3B6D11;font-weight:700">&#10004; Migracion ejecutada correctamente</div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="ao asu" style="animation-delay:1.2s;max-width:760px">Sin esta migracion el portal publico fallara al intentar guardar radicados</div>`;
+ setTimeout(()=>{const b=document.getElementById('sqlBox');if(b)b.style.opacity='1';},800);
+ [['sl1',1200],['sl2',1600],['sl3',2000],['sl4',2400],['sl5',2800],['sl6',3200]].forEach(([id,ms])=>{setTimeout(()=>{const e=document.getElementById(id);if(e)e.style.opacity='1';},ms);});
+ setTimeout(()=>{const m=document.getElementById('sqlMOk');if(m)m.style.cssText='opacity:1;background:#D6F0B2;border:1px solid #39A900;border-radius:7px;padding:6px 14px;font-size:12px;color:#3B6D11;font-weight:700;animation:popin .5s cubic-bezier(.34,1.56,.64,1) forwards';},4800);
+}},
+
+/* 10 - NPM INSTALL */
+{t:'Instalar dependencias (npm install)',d:7,bg:'linear-gradient(140deg,#0A0A0A,#0A1A04)',
+n:'Abra la carpeta frontend con el simbolo del sistema. Escriba npm install y espere entre 1 y 5 minutos hasta que vuelva a aparecer el cursor.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='12px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 8 - npm install</div>
+  <div class="win asu" style="animation-delay:.3s;max-width:740px">
+   <div class="win-bar" style="background:#1A1A1A"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl">sena-sistema/frontend</div></div>
+   <div class="term-body" style="min-height:115px">
+    ${[['i1',.4,'<span class="tp">/sena-sistema/frontend&gt;</span><span class="tk"> npm install</span>'],
+       ['i2',.9,'<span class="ti"> Resolving packages...</span>'],
+       ['i3',1.5,'<span class="to"> npm fetch GET https://registry.npmjs.org/react</span>'],
+       ['i4',2.2,'<span class="to"> npm fetch GET https://registry.npmjs.org/react-dom</span>'],
+       ['i5',3.1,'<span class="ti">   added 680 packages in 23s...</span>'],
+       ['i6',4.3,'<span class="tk"> added 1405 packages, audited 1406 packages in 47s</span>'],
+       ['i7',4.9,'<span class="ti"> found 0 vulnerabilities</span>'],
+       ['i8',5.4,'<span class="tp">/sena-sistema/frontend&gt;</span><span style="display:inline-block;width:7px;height:13px;background:#A8E063;margin-left:2px;vertical-align:middle"></span>']
+    ].map(([id])=>`<div class="tl" id="${id}"></div>`).join('')}
+   </div>
+  </div>
+  <div class="ao asu" style="animation-delay:1.2s;max-width:740px">Espere hasta que vuelva a aparecer el cursor antes de continuar</div>`;
+ [['i1',.4,'<span class="tp">/sena-sistema/frontend&gt;</span><span class="tk"> npm install</span>'],['i2',.9,'<span class="ti"> Resolving packages...</span>'],['i3',1.5,'<span class="to"> npm fetch GET https://registry.npmjs.org/react</span>'],['i4',2.2,'<span class="to"> npm fetch GET https://registry.npmjs.org/react-dom</span>'],['i5',3.1,'<span class="ti">   added 680 packages in 23s...</span>'],['i6',4.3,'<span class="tk"> added 1405 packages, audited 1406 packages in 47s</span>'],['i7',4.9,'<span class="ti"> found 0 vulnerabilities</span>'],['i8',5.4,'<span class="tp">/sena-sistema/frontend&gt;</span><span style="display:inline-block;width:7px;height:13px;background:#A8E063;margin-left:2px;vertical-align:middle"></span>']].forEach(([id,d,h])=>{setTimeout(()=>{const e=document.getElementById(id);if(e){e.innerHTML=h;e.style.opacity='1';}},d*1000);});
+}},
+
+/* 11 - NPM START + PORTAL */
+{t:'Iniciar el sistema',d:8,bg:'linear-gradient(140deg,#0A0A0A,#0A1A04)',
+n:'Escriba npm start. El navegador abrira automaticamente mostrando el Portal del SENA. Ahora cualquier ciudadano puede crear o consultar radicados sin login.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='11px';
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Paso 9 - npm start - El Portal</div>
+  <div class="win asu" style="animation-delay:.3s;max-width:760px">
+   <div class="win-bar" style="background:#1A1A1A"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="wl">Simbolo del sistema</div></div>
+   <div class="term-body" style="min-height:60px">
+    <div class="tl" id="s1"></div>
+    <div class="tl" id="s2"></div>
+    <div class="tl" id="s3"></div>
+    <div class="tl" id="s4"></div>
+   </div>
+  </div>
+  <div id="portalAbre" style="opacity:0;width:100%;max-width:760px">
+   <div class="win">
+    <div class="win-bar" style="background:#252535"><div class="wd" style="background:#FF5F56"></div><div class="wd" style="background:#FEBC2E"></div><div class="wd" style="background:#28C840"></div><div class="burl">http://localhost:3000</div></div>
+    <div class="portal-bg" style="padding:20px">
+     <div style="text-align:center;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:900;color:#fff">SENA - SINDESENA Regional Caldas</div>
+      <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px">&#191;Que desea hacer hoy?</div>
+     </div>
+     <div class="portal-cards-row" style="max-width:500px">
+      <div class="pcard" style="border-color:rgba(57,169,0,.5);background:rgba(57,169,0,.12)"><h4 style="color:#A8E063">Crear Radicado</h4><p style="color:rgba(255,255,255,.6)">Registre su solicitud ante el SENA</p><button class="pcard-btn" style="background:#39A900;color:#fff">Iniciar radicacion</button></div>
+      <div class="pcard" style="border-color:rgba(90,180,255,.4);background:rgba(26,111,168,.15)"><h4 style="color:#90CAF9">Consultar</h4><p style="color:rgba(255,255,255,.6)">Vea el estado de sus radicados</p><button class="pcard-btn" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)">Consultar</button></div>
+     </div>
+     <div style="font-size:11px;color:rgba(255,255,255,.28);margin-top:8px">Acceso Administracion</div>
+    </div>
+   </div>
+  </div>`;
+ [['s1',.4,'<span class="tp">/sena-sistema/frontend&gt;</span><span class="tk"> npm start</span>'],['s2',.9,'<span class="to"> Starting the development server...</span>'],['s3',1.7,'<span class="tk"> Compiled successfully!</span>'],['s4',2.3,'<span class="ti"> Local: </span><span class="tk">http://localhost:3000</span>']].forEach(([id,d,h])=>{setTimeout(()=>{const e=document.getElementById(id);if(e){e.innerHTML=h;e.style.opacity='1';}},d*1000);});
+ setTimeout(()=>{const b=document.getElementById('portalAbre');if(b)b.style.cssText='width:100%;max-width:760px;opacity:1;animation:slideup .5s forwards';},2900);
+}},
+
+/* 12 - VERIFICACION */
+{t:'Lista de verificacion',d:8,bg:'linear-gradient(140deg,#0A1A04,#0F2208)',
+n:'Verifique estos nueve puntos antes de entregar el sistema. Si todos estan correctos, la instalacion fue exitosa.',
+r(el){
+ el.style.flexDirection='column'; el.style.gap='9px'; el.style.alignItems='flex-start';
+ const items=['XAMPP abierto - Apache dice Running','XAMPP abierto - MySQL dice Running','http://localhost muestra la pagina de XAMPP','La carpeta sena-backend esta en C:/xampp/htdocs','phpMyAdmin muestra sena_competencias_db con tablas','La migracion migrate_public_portal.sql fue ejecutada','http://localhost:3000 muestra el Portal Ciudadano','Desde el Portal se puede crear un radicado sin login','El boton Acceso Administracion lleva al login'];
+ el.innerHTML=`
+  <div class="sc-t afi" style="animation-delay:.05s">Verificacion final</div>
+  <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:720px">
+   ${items.map((txt,i)=>`<div class="ach" style="animation-delay:${.2+i*.2}s;display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.06);border:1px solid rgba(57,169,0,.25);border-radius:9px;padding:10px 16px"><div style="width:24px;height:24px;border-radius:50%;background:#39A900;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;color:#fff">&#10003;</div><span style="font-size:13px;color:rgba(255,255,255,.85);font-weight:500">${txt}</span></div>`).join('')}
+  </div>`;
+}},
+
+/* 13 - FIN */
+{t:'Instalacion completada',d:6,bg:'linear-gradient(140deg,#0A1A04,#1A4A08)',
+n:'La instalacion ha concluido exitosamente. El sistema v2.0 con Portal Publico esta listo. Consulte el Manual de Usuario para aprender a operarlo.',
+r(el){
+ el.style.flexDirection='column'; el.style.alignItems='center'; el.style.gap='18px';
+ el.innerHTML=`
+  <div class="api" style="animation-delay:.2s;width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#39A900,#6DC700);display:flex;align-items:center;justify-content:center;animation-name:popin,glowanim;animation-duration:.5s,2s;animation-delay:.2s,.7s;animation-fill-mode:forwards,none;animation-timing-function:cubic-bezier(.34,1.56,.64,1),ease-in-out;animation-iteration-count:1,infinite;opacity:0">
+   <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M9 24 L19 34 L39 15" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="asu" style="animation-delay:.7s;text-align:center">
+   <div style="font-family:Barlow Condensed,sans-serif;font-size:clamp(24px,3.8vw,48px);font-weight:900">Instalacion completada</div>
+   <div style="font-size:14px;color:rgba(255,255,255,.45);margin-top:7px">SINDESENA v2.0 con Portal Publico listo para usar</div>
+  </div>
+  <div class="asu" style="animation-delay:1.1s;display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+   <div style="background:rgba(57,169,0,.14);border:1px solid rgba(57,169,0,.3);border-radius:11px;padding:12px 20px;text-align:center">
+    <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Portal ciudadano</div>
+    <div style="font-size:13px;color:#A8E063;font-weight:700;font-family:JetBrains Mono,monospace">localhost:3000</div>
+   </div>
+   <div style="background:rgba(57,169,0,.14);border:1px solid rgba(57,169,0,.3);border-radius:11px;padding:12px 20px;text-align:center">
+    <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Admin</div>
+    <div style="font-size:13px;color:#A8E063;font-weight:700;font-family:JetBrains Mono,monospace">admin@sena.edu.co</div>
+   </div>
+  </div>
+  <div class="afi" style="animation-delay:1.5s;font-size:11px;color:rgba(255,255,255,.2)">SENA Regional Caldas - SINDESENA v2.0 - 2026</div>`;
+}}
+
+];
+
+/* == REPRODUCTOR == */
+let cur=0,playing=false,elapsed=0,sceneEl=0,ticker=null,narrT=null;
+const TOTAL=S.reduce((a,s)=>a+s.d,0);
+window.addEventListener('DOMContentLoaded',()=>{buildChaps();loadScene(0);updateTime();});
+function buildChaps(){
+ const list=document.getElementById('chapsList'); let acc=0;
+ S.forEach((s,i)=>{
+  const mm=Math.floor(acc/60),ss=String(acc%60).padStart(2,'0');
+  list.innerHTML+=`<div class="chap-item" id="ci${i}" onclick="jumpTo(${i})"><div class="chap-n">${i+1}</div><div class="chap-label">${s.t}</div><div class="chap-time">${mm}:${ss}</div></div>`;
+  acc+=s.d;
+ });
+ const marks=document.getElementById('progChaps'); acc=0;
+ S.forEach((s,i)=>{if(i>0){marks.innerHTML+=`<div class="chap-mark" style="left:${(acc/TOTAL)*100}%"></div>`;}acc+=s.d;});
+}
+function markChap(){document.querySelectorAll('.chap-item').forEach((e,i)=>e.classList.toggle('active',i===cur));}
+function openChaps(){document.getElementById('chapsOverlay').classList.add('open');}
+function closeChaps(){document.getElementById('chapsOverlay').classList.remove('open');}
+function loadScene(idx){
+ cur=idx; sceneEl=0;
+ const s=S[idx],fade=document.getElementById('sceneFade');
+ fade.classList.add('on');
+ setTimeout(()=>{
+  document.getElementById('sceneBg').style.background=s.bg;
+  document.getElementById('sceneCtr').textContent=String(idx+1).padStart(2,'0')+' / '+S.length;
+  document.getElementById('ctrlTitle').textContent=s.t;
+  const stage=document.getElementById('sceneStage');
+  stage.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;padding:22px 44px;flex-direction:column;gap:0;';
+  stage.innerHTML='';
+  s.r(stage);
+  typeNarr(s.n);
+  fade.classList.remove('on');
+  markChap(); updateTime();
+ },320);
+}
+function togglePlay(){
+ playing=!playing;
+ document.getElementById('iPlay').style.display=playing?'none':'block';
+ document.getElementById('iPause').style.display=playing?'block':'none';
+ if(playing)startTicker(); else clearInterval(ticker);
+}
+function startTicker(){
+ clearInterval(ticker);
+ ticker=setInterval(()=>{
+  elapsed+=.1; sceneEl+=.1; updateTime();
+  if(sceneEl>=S[cur].d){
+   if(cur<S.length-1){elapsed=S.slice(0,cur+1).reduce((a,s)=>a+s.d,0);loadScene(cur+1);if(playing)startTicker();}
+   else{playing=false;document.getElementById('iPlay').style.display='block';document.getElementById('iPause').style.display='none';clearInterval(ticker);}
+  }
+ },100);
+}
+function next(){jumpTo(Math.min(cur+1,S.length-1));}
+function prev(){jumpTo(Math.max(cur-1,0));}
+function jumpTo(idx){clearInterval(ticker);elapsed=S.slice(0,idx).reduce((a,s)=>a+s.d,0);loadScene(idx);closeChaps();if(playing)startTicker();}
+function clickProg(e){
+ const r=document.getElementById('progBar').getBoundingClientRect();
+ const pct=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+ const target=pct*TOTAL; let acc=0;
+ for(let i=0;i<S.length;i++){if(acc+S[i].d>target){elapsed=target;loadScene(i);if(playing)startTicker();return;}acc+=S[i].d;}
+}
+function updateTime(){
+ const pct=Math.min(elapsed/TOTAL*100,100);
+ document.getElementById('progFill').style.width=pct+'%';
+ document.getElementById('ctrlTime').textContent=fmt(elapsed)+' / '+fmt(TOTAL);
+}
+function fmt(s){const m=Math.floor(s/60);return m+':'+String(Math.floor(s%60)).padStart(2,'0');}
+function typeNarr(text){
+ clearTimeout(narrT);
+ const el=document.getElementById('narrText'); el.innerHTML='<span class="cursor-blink"></span>';
+ let i=0;
+ function step(){if(i<=text.length){el.innerHTML=text.slice(0,i)+'<span class="cursor-blink"></span>';i++;narrT=setTimeout(step,25);}}
+ step();
+}
+</script>
+</body>
+</html>

@@ -1,15 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión y creación de radicados</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENA - Gestión de radicados</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .wrap { max-width: 700px; width: 100%; margin: 2rem auto; padding: 2rem 1rem; text-align: center; }
+    .logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2rem; }
+    .logo-circle { width: 56px; height: 56px; border-radius: 50%; background: #39A900; display: flex; align-items: center; justify-content: center; }
+    .logo-circle i { font-size: 28px; color: #fff; }
+    .titulo { font-size: 24px; font-weight: bold; color: #39A900; }
+    .subtitulo { font-size: 15px; color: #666; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+    .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .icon-wrap { width: 56px; height: 56px; border-radius: 50%; background: #e8f7d8; display: flex; align-items: center; justify-content: center; }
+    .icon-wrap i { font-size: 26px; color: #39A900; }
+    .card h2 { font-size: 16px; color: #222; }
+    .card p { font-size: 13px; color: #666; text-align: center; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: #39A900; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: #2d8200; }
+    footer { margin-top: 2rem; font-size: 12px; color: #999; }
+  </style>
 </head>
 <body>
-    <h1>Gestión y creación de radicados</h1>
-    <ul>
-        <li><a href="/video-tutorial-instalacion-sena.html">Tutorial Instalación SENA</a></li>
-        <li><a href="/video-tutorial-usuario-sena.html">Tutorial Usuario SENA</a></li>
-    </ul>
+  <div class="wrap">
+    <div class="logo">
+      <div class="logo-circle"><i class="ti ti-building"></i></div>
+      <div>
+        <p class="titulo">SENA</p>
+        <p class="subtitulo">Gestión y creación de radicados</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="icon-wrap"><i class="ti ti-download"></i></div>
+        <h2>Tutorial de instalación</h2>
+        <p>Aprende a instalar el sistema paso a paso</p>
+        <a class="btn" href="/video-tutorial-instalacion-sena.html" target="_blank">
+          <i class="ti ti-player-play"></i> Ver video
+        </a>
+      </div>
+      <div class="card">
+        <div class="icon-wrap"><i class="ti ti-user"></i></div>
+        <h2>Tutorial de usuario</h2>
+        <p>Guía completa para el uso del sistema</p>
+        <a class="btn" href="/video-tutorial-usuario-sena.html" target="_blank">
+          <i class="ti ti-player-play"></i> Ver video
+        </a>
+      </div>
+    </div>
+    <footer>© SENA — Sistema de gestión de radicados</footer>
+  </div>
 </body>
 </html>
